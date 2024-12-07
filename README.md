@@ -1,4 +1,3 @@
-# Gestión de Proyectos
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,11 +44,11 @@
         </div>
 
         <!-- Temporizador -->
-        <div class="timer" id="timer">Tiempo restante: 05:00</div>
+        <div class="timer" id="timer">Tiempo restante: 10:00</div>
 
         <!-- Preguntas -->
         <div class="question">
-            <label>1. ¿Cuánto es 5 + 3?</label><br>
+            <label>1. ¿Cuánto es 5 + 6?</label><br>
             <input type="radio" name="q1" value="6"> 6<br>
             <input type="radio" name="q1" value="8"> 8<br>
             <input type="radio" name="q1" value="10"> 10<br>
@@ -66,11 +65,14 @@
     <div id="result" class="result"></div>
 
     <script>
-        // Control del temporizador
-        let timeLeft = 300; // 5 minutos en segundos
+        // Variables globales
+        let timeLeft = 600; // 10 minutos en segundos
+        let focusLossCount = 0; // Contador de pérdida de foco
+        const maxFocusLoss = 3; // Límite permitido
         const timerElement = document.getElementById('timer');
         const submitButton = document.getElementById('submitButton');
 
+        // Temporizador
         const timer = setInterval(() => {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
@@ -80,11 +82,29 @@
             if (timeLeft < 0) {
                 clearInterval(timer);
                 timerElement.textContent = "Tiempo agotado.";
-                submitButton.disabled = true;
+                terminarExamen("Tiempo agotado.");
             }
         }, 1000);
 
-        // Función para verificar respuestas
+        // Detectar cambio de pestaña
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                focusLossCount++;
+                alert(`Has salido del examen ${focusLossCount} vez/veces. Límite permitido: ${maxFocusLoss}.`);
+                if (focusLossCount > maxFocusLoss) {
+                    terminarExamen("Examen terminado por salir de la página.");
+                }
+            }
+        });
+
+        // Finalizar examen
+        function terminarExamen(mensaje) {
+            alert(mensaje);
+            checkAnswers();
+            submitButton.disabled = true; // Evita múltiples envíos
+        }
+
+        // Verificar respuestas
         function checkAnswers() {
             const name = document.getElementById('name').value.trim();
             if (!name) {
@@ -107,17 +127,3 @@
     </script>
 </body>
 </html>
-// Detecta si el usuario intenta salir de la pestaña
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    alert("Has salido del examen. Tu sesión será invalidada.");
-    // Aquí puedes llamar a una función para invalidar el examen
-    terminarExamen();
-  }
-});
-
-function terminarExamen() {
-  // Lógica para eliminar o finalizar el examen
-  console.log("Examen terminado por abandonar la página.");
-  window.location.href = "pagina-final.html"; // Redirige o finaliza
-}
