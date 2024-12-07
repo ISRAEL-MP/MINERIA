@@ -1,4 +1,4 @@
-# SOCIEDAD Y MINERIA
+# Gestión de Proyectos
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +11,7 @@
             margin: 20px;
             padding: 10px;
         }
-        .question {
+        .question, .user-info {
             margin-bottom: 15px;
         }
         .submit-btn {
@@ -25,15 +25,29 @@
         .submit-btn:hover {
             background-color: #45a049;
         }
-        .result {
+        .result, .timer {
             margin-top: 20px;
             font-size: 18px;
+        }
+        .timer {
+            font-weight: bold;
+            color: red;
         }
     </style>
 </head>
 <body>
     <h1>Examen de Matemáticas</h1>
     <form id="examForm">
+        <!-- Información del usuario -->
+        <div class="user-info">
+            <label for="name">Apellidos y Nombres:</label><br>
+            <input type="text" id="name" name="name" placeholder="Escribe tus apellidos y nombres" required style="width: 100%; padding: 8px;">
+        </div>
+
+        <!-- Temporizador -->
+        <div class="timer" id="timer">Tiempo restante: 05:00</div>
+
+        <!-- Preguntas -->
         <div class="question">
             <label>1. ¿Cuánto es 5 + 3?</label><br>
             <input type="radio" name="q1" value="6"> 6<br>
@@ -46,12 +60,38 @@
             <input type="radio" name="q2" value="20"> 20<br>
             <input type="radio" name="q2" value="22"> 22<br>
         </div>
-        <button type="button" class="submit-btn" onclick="checkAnswers()">Enviar</button>
+        
+        <button type="button" class="submit-btn" id="submitButton" onclick="checkAnswers()">Enviar</button>
     </form>
     <div id="result" class="result"></div>
 
     <script>
+        // Control del temporizador
+        let timeLeft = 300; // 5 minutos en segundos
+        const timerElement = document.getElementById('timer');
+        const submitButton = document.getElementById('submitButton');
+
+        const timer = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `Tiempo restante: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+            timeLeft--;
+
+            if (timeLeft < 0) {
+                clearInterval(timer);
+                timerElement.textContent = "Tiempo agotado.";
+                submitButton.disabled = true;
+            }
+        }, 1000);
+
+        // Función para verificar respuestas
         function checkAnswers() {
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                alert("Por favor, ingresa tus apellidos y nombres.");
+                return;
+            }
+
             let score = 0;
             const totalQuestions = 2;
 
@@ -62,7 +102,7 @@
             if (q2 && q2.value === "18") score++;
 
             const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `Obtuviste ${score} de ${totalQuestions} preguntas correctas.`;
+            resultDiv.innerHTML = `${name}, obtuviste ${score} de ${totalQuestions} preguntas correctas.`;
         }
     </script>
 </body>
