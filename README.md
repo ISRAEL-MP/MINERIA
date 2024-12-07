@@ -107,3 +107,17 @@
     </script>
 </body>
 </html>
+// Detecta si el usuario intenta salir de la pestaña
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    alert("Has salido del examen. Tu sesión será invalidada.");
+    // Aquí puedes llamar a una función para invalidar el examen
+    terminarExamen();
+  }
+});
+
+function terminarExamen() {
+  // Lógica para eliminar o finalizar el examen
+  console.log("Examen terminado por abandonar la página.");
+  window.location.href = "pagina-final.html"; // Redirige o finaliza
+}
